@@ -1,0 +1,40 @@
+version: "3"
+services:
+  openvas:
+    restart: unless-stopped
+    labels:
+      - "traefik.http.routers.openvas.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.openvas.entrypoints=websecure"
+      - "traefik.http.routers.openvas.tls.certresolver=myresolver"
+    environment:
+      - "PASSWORD=331ad331min331"
+      - "USERNAME=admin"
+      - "RELAYHOST=127.0.0.1"
+      - "SMTPPORT=25"
+      - "REDISDBS=512" # number of Redis DBs to use
+      - "QUIET=false"  # dump feed sync noise to /dev/null
+      - "NEWDB=false"  # only use this for creating a blank DB
+      - "SKIPSYNC=false" # Skips the feed sync on startup.
+      - "RESTORE=false"  # This probably not be used from compose... see docs.
+      - "DEBUG=false"  # This will cause the container to stop and not actually start gvmd
+      - "HTTPS=false"  # wether to use HTTPS or not
+    volumes:
+      - "./openvas/data:/data"
+    ports: [9392]
+    container_name: openvas
+    image: immauss/openvas:21.04.07
+
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/etc/traefik
+
+networks:
+  default:
+    name: traefik
