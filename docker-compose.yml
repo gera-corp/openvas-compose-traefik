@@ -34,7 +34,7 @@ services:
     environment:
       - "PASSWORD=331ad331min331"
       - "USERNAME=admin"
-      - "RELAYHOST=127.0.0.1"
+      - "RELAYHOST=postfix"
       - "SMTPPORT=25"
       - "REDISDBS=512" # number of Redis DBs to use
       - "QUIET=false"  # dump feed sync noise to /dev/null
@@ -45,6 +45,12 @@ services:
       - "HTTPS=false"  # wether to use HTTPS or not
     volumes:
       - "./openvas/data:/data"
-    ports: [80]
     container_name: openvas
     image: immauss/openvas:21.04.07
+
+  postfix:
+    restart: unless-stopped
+    environment:
+      - "MAILNAME=mail.geracorp.ru"
+    container_name: postfix
+    image: freinet/postfix-relay:1.5
