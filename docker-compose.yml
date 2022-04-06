@@ -45,6 +45,5 @@ services:
       - "HTTPS=false"  # wether to use HTTPS or not
     volumes:
       - "./openvas/data:/data"
-    ports: [80]
     container_name: openvas
     image: immauss/openvas:21.04.07
